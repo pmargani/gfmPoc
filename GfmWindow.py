@@ -1,27 +1,52 @@
+"module for the GFM application window"
+
 import sys
+
 from PySide6.QtWidgets import QWidget, QListView, QTextEdit, QHBoxLayout, QVBoxLayout, QSplitter
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QCheckBox
+
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas, NavigationToolbar2QT
 from ScanData import ScanData
 from PlotData import PlotData
 from ScanListModel import ScanListModel
 
 class GfmWindow(QWidget):
-    def __init__(self):
+    def __init__(self, project_name : str):
         super().__init__()
-        self.setWindowTitle("GFM - List and Text Edit")
-        self.resize(600, 400)
+        self.project_name = project_name
+        self.setWindowTitle("GFM - " + self.project_name)
 
-        fn = "dcr.pkl"
-        self.scanData = ScanData(fn)
-        self.scans_widget = QListView()
+        # Try to size the window to about half the screen
+        from PySide6.QtGui import QGuiApplication
+        screen = QGuiApplication.primaryScreen()
+        if screen:
+            screen_geometry = screen.geometry()
+            width = screen_geometry.width() // 2
+            height = screen_geometry.height() // 2
+            left = screen_geometry.left() + (screen_geometry.width() - width) // 2
+            top = screen_geometry.top() + (screen_geometry.height() - height) // 2
+            self.setGeometry(left, top, width, height)
+        else:
+            print("Warning: Unable to determine screen geometry, using default size.")
+            self.resize(1200, 400)
+
+        # Initialize components
+        fn = "projData.pkl"
+        self.scanData = ScanData(fn, self.project_name)
+
         self.text_edit = QTextEdit()
         self.canvas = FigureCanvas()
         self.toolbar = NavigationToolbar2QT(self.canvas, self)
-        self.scans = list(range(1, 5))
-        self.model = ScanListModel(self.scans)
+
+        # Initialize the scan list
+        # here we use a model to ensure the scans are displayed correctly
+        self.scans_widget = QListView()
+        self.model = ScanListModel(self.scanData)
         self.scans_widget.setModel(self.model)
         self.scans_widget.selectionModel().currentChanged.connect(self.display_scan_data)
+        self.firstScanSelected = False # TBF: kluge to avoid displaying the first scan on startup
+
         self.options_panel = QWidget()
         self.options_layout = QVBoxLayout(self.options_panel)
         self.options_checkboxes = {}
@@ -48,24 +73,37 @@ class GfmWindow(QWidget):
         self.setLayout(layout)
 
     def display_scan_data(self, current, previous):
-        scan = self.model.data(current, Qt.DisplayRole)
-        value = f"proj: {self.scanData.data['project']}, scan: {scan}"
+        # keep the first scan from being displayed on startup
+        if not self.firstScanSelected:  # TBF: kluge
+            self.firstScanSelected = True
+            return
+
+        # scan = self.model.data(current, Qt.DisplayRole)
+
+        # get the scan data by index
+        scan = self.model.getScanDataByIndex(current.row())
+
+        # use the scan data to update the text edit and options panel
+        print(f"Displaying scan data for: {scan}, type: {type(scan)}")
+        value = f"proj: {self.project_name}, scan: {scan['scan']}"
         self.text_edit.setPlainText(value)
+        # Clear previous options
         while self.options_layout.count():
             item = self.options_layout.takeAt(0)
             widget = item.widget()
             if widget:
                 widget.setParent(None)
         self.options_checkboxes.clear()
-        opts = self.scanData.getScanOptions()
-        from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QCheckBox
-        import itertools
+
+        # Get scan options and create checkboxes
+        opts = self.scanData.getScanOptions(current.row())
         for label, values in opts.items():
             group_box = QGroupBox(label)
             h_layout = QHBoxLayout()
             checkboxes = []
             for i, val in enumerate(values):
                 cb = QCheckBox(str(val))
+                # first checkbox is checked by default
                 if i == 0:
                     cb.setChecked(True)
                 h_layout.addWidget(cb)
@@ -74,9 +112,13 @@ class GfmWindow(QWidget):
             group_box.setLayout(h_layout)
             self.options_layout.addWidget(group_box)
             self.options_checkboxes[label] = checkboxes
-            self.on_option_checkbox_changed()
+
+        # Trigger the checkbox change handler to update the plot
+        self.on_option_checkbox_changed()
 
     def on_option_checkbox_changed(self):
+
+        # find the selected values from the checkboxes
         labels = ["beams", "pols", "phases", "freqs"]
         selected_values = {}
         for label in labels:
@@ -98,39 +140,42 @@ class GfmWindow(QWidget):
         import itertools
         value_lists = [selected_values[label] for label in labels]
         key_combinations = list(itertools.product(*value_lists))
-        scan = self.model.data(self.scans_widget.currentIndex(), Qt.DisplayRole)
-        self.plot_data(self.scanData.project, scan, key_combinations)
-        labels = ["beams", "pols", "phases", "freqs"]
-        selected_values = {}
-        for label in labels:
-            selected_values[label] = []
-            checkboxes = self.options_checkboxes[label]
-            for cb in checkboxes:
-                if cb.isChecked():
-                    val = cb.text()
-                    try:
-                        val = int(val)
-                    except ValueError:
-                        try:
-                            val = float(val)
-                        except ValueError:
-                            pass
-                    selected_values[label].append(val)
-        value_lists = [selected_values[label] for label in labels]
-        key_combinations = list(itertools.product(*value_lists))
+        # scan = self.model.data(self.scans_widget.currentIndex(), Qt.DisplayRole)
+        scanIndex = self.scans_widget.currentIndex().row()
+        scan = self.model.getScanDataByIndex(scanIndex)
         print(f"key_combinations: {key_combinations}")
-        self.plot_data(self.scanData.project, scan, key_combinations)
+        self.plot_data(self.scanData.project, scanIndex, key_combinations)
+        # labels = ["beams", "pols", "phases", "freqs"]
+        # selected_values = {}
+        # for label in labels:
+        #     selected_values[label] = []
+        #     checkboxes = self.options_checkboxes[label]
+        #     for cb in checkboxes:
+        #         if cb.isChecked():
+        #             val = cb.text()
+        #             try:
+        #                 val = int(val)
+        #             except ValueError:
+        #                 try:
+        #                     val = float(val)
+        #                 except ValueError:
+        #                     pass
+        #             selected_values[label].append(val)
+        # value_lists = [selected_values[label] for label in labels]
+        # key_combinations = list(itertools.product(*value_lists))
+        # print(f"key_combinations: {key_combinations}")
+        # self.plot_data(self.scanData.project, scan, key_combinations)
 
-    def plot_data(self, project, scan, optionsKeys):
-        opts = self.scanData.getScanOptions()
+    def plot_data(self, project, scanIndex : int, optionsKeys):
+        opts = self.scanData.getScanOptions(scanIndex)
         print(opts)
         plotter = PlotData(
-            x=self.scanData.data['x'],
-            y_list=[self.scanData.data['ydata'][key] for key in optionsKeys],
+            x=self.scanData.getScanXDataByIndex(scanIndex),
+            y_list=[self.scanData.getScanYDataByIndex(scanIndex, key) for key in optionsKeys],
             labels=optionsKeys,
-            xlabel="X-axis",
-            ylabel="Y-axis",
-            title=f"Scan {scan}"
+            xlabel="Time",
+            ylabel="Power",
+            title=self.scanData.getScanShortDesc(scanIndex)
         )
         fig, ax = plotter.plot()
         parent_layout = self.canvas.parentWidget().layout()

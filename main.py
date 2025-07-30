@@ -15,6 +15,10 @@ from GfmWindow import GfmWindow
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = GfmWindow()
+    if len(sys.argv) > 1:
+        project_name = sys.argv[1]
+    else:
+        project_name = "GFM"
+    window = GfmWindow(project_name)
     window.show()
     sys.exit(app.exec())
