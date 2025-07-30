@@ -48,6 +48,7 @@ class GfmWindow(QWidget):
         self.scans_widget.selectionModel().currentChanged.connect(self.display_scan_data)
         self.firstScanSelected = False # TBF: kluge to avoid displaying the first scan on startup
 
+
         # Create the continuum tab and add it to the tab widget
         self.continuum_tab = ContinuumTab(
             parent=self,
@@ -55,6 +56,24 @@ class GfmWindow(QWidget):
             model=self.model
         )
         self.tabs.addTab(self.continuum_tab, "Continuum")
+
+
+        # Create the pointing tab (placeholder)
+        from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout
+        self.pointing_tab = QWidget()
+        pointing_layout = QVBoxLayout(self.pointing_tab)
+        self.pointing_label = QLabel("Pointing tab content goes here.")
+        pointing_layout.addWidget(self.pointing_label)
+        self.pointing_tab.setLayout(pointing_layout)
+        self.tabs.addTab(self.pointing_tab, "Pointing")
+
+        # Create the focus tab (placeholder)
+        self.focus_tab = QWidget()
+        focus_layout = QVBoxLayout(self.focus_tab)
+        self.focus_label = QLabel("Focus tab content goes here.")
+        focus_layout.addWidget(self.focus_label)
+        self.focus_tab.setLayout(focus_layout)
+        self.tabs.addTab(self.focus_tab, "Focus")
 
         splitter = QSplitter(Qt.Horizontal)
         splitter.addWidget(self.scans_widget)
@@ -69,8 +88,27 @@ class GfmWindow(QWidget):
         if not self.firstScanSelected:  # TBF: kluge
             self.firstScanSelected = True
             return
-        # Delegate scan display to the ContinuumTab
-        self.continuum_tab.display_scan_data(current, previous)
+        # get the scan type from the scanIndex
+        scanIndex = current.row()
+        scanType = self.scanData.getScanDataByIndex(scanIndex)['scanType']
+        continuumTypes = ['Peak', 'Focus']
+        peakTypes = ['Peak']
+        focusTypes = ['Focus']
+        desc = self.scanData.getScanFullDesc(scanIndex)
+        # Delegate scan display to the tabs
+        if scanType in continuumTypes:
+            self.continuum_tab.display_scan_data(current, previous)
+            self.tabs.setCurrentWidget(self.continuum_tab)
+        if scanType in peakTypes:
+            # self.peak_tab.display_scan_data(current, previous)
+            self.pointing_label.setText(f"Peak scan type detected. {desc}")
+            self.tabs.setCurrentWidget(self.pointing_tab)
+        if scanType in focusTypes:
+            # self.focus_tab.display_scan_data(current, previous)
+            self.focus_label.setText(f"Focus scan type detected. {desc}")
+            self.tabs.setCurrentWidget(self.focus_tab)
+        # else:
+        #     print(f"Unknown scan type: {scanType}. No action taken.")
 
 
     def on_option_checkbox_changed(self):
