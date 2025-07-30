@@ -1,6 +1,7 @@
 "module for the GFM application window"
 
 import sys
+import itertools
 
 from PySide6.QtWidgets import QWidget, QListView, QTextEdit, QHBoxLayout, QVBoxLayout, QSplitter
 from PySide6.QtCore import Qt
@@ -99,17 +100,17 @@ class GfmWindow(QWidget):
         opts = self.scanData.getScanOptions(current.row())
         for label, values in opts.items():
             group_box = QGroupBox(label)
-            h_layout = QHBoxLayout()
+            v_layout = QVBoxLayout()
             checkboxes = []
             for i, val in enumerate(values):
                 cb = QCheckBox(str(val))
                 # first checkbox is checked by default
                 if i == 0:
                     cb.setChecked(True)
-                h_layout.addWidget(cb)
+                v_layout.addWidget(cb)
                 checkboxes.append(cb)
                 cb.stateChanged.connect(self.on_option_checkbox_changed)
-            group_box.setLayout(h_layout)
+            group_box.setLayout(v_layout)
             self.options_layout.addWidget(group_box)
             self.options_checkboxes[label] = checkboxes
 
@@ -137,7 +138,6 @@ class GfmWindow(QWidget):
                     selected_values[label].append(val)
         if any(len(selected_values[label]) == 0 for label in labels):
             return
-        import itertools
         value_lists = [selected_values[label] for label in labels]
         key_combinations = list(itertools.product(*value_lists))
         # scan = self.model.data(self.scans_widget.currentIndex(), Qt.DisplayRole)
@@ -145,30 +145,10 @@ class GfmWindow(QWidget):
         scan = self.model.getScanDataByIndex(scanIndex)
         print(f"key_combinations: {key_combinations}")
         self.plot_data(self.scanData.project, scanIndex, key_combinations)
-        # labels = ["beams", "pols", "phases", "freqs"]
-        # selected_values = {}
-        # for label in labels:
-        #     selected_values[label] = []
-        #     checkboxes = self.options_checkboxes[label]
-        #     for cb in checkboxes:
-        #         if cb.isChecked():
-        #             val = cb.text()
-        #             try:
-        #                 val = int(val)
-        #             except ValueError:
-        #                 try:
-        #                     val = float(val)
-        #                 except ValueError:
-        #                     pass
-        #             selected_values[label].append(val)
-        # value_lists = [selected_values[label] for label in labels]
-        # key_combinations = list(itertools.product(*value_lists))
-        # print(f"key_combinations: {key_combinations}")
-        # self.plot_data(self.scanData.project, scan, key_combinations)
+
 
     def plot_data(self, project, scanIndex : int, optionsKeys):
         opts = self.scanData.getScanOptions(scanIndex)
-        print(opts)
         plotter = PlotData(
             x=self.scanData.getScanXDataByIndex(scanIndex),
             y_list=[self.scanData.getScanYDataByIndex(scanIndex, key) for key in optionsKeys],
