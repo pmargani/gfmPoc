@@ -3,12 +3,13 @@
 import itertools
 
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QGroupBox, QCheckBox
+from GfmTab import GfmTab
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas, NavigationToolbar2QT
 
 from ScanData import ScanData
 from PlotData import PlotData
 
-class ContinuumTab(QWidget):
+class ContinuumTab(GfmTab):
 
     """
     A class for handling all DCR data in GFM.
