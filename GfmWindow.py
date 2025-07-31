@@ -1,5 +1,8 @@
 "module for the GFM application window"
 
+import logging
+
+from email.mime import message
 import sys
 import itertools
 
@@ -8,6 +11,8 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QCheckBox
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout
+from PySide6.QtWidgets import QTextEdit
+
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas, NavigationToolbar2QT
 
 from ScanData import ScanData
@@ -20,6 +25,7 @@ from SpectralTab import SpectralTab
 from MenuBar import MenuBar
 from PySide6.QtWidgets import QFileDialog
 
+logger = logging.getLogger(__name__)
 
 class GfmWindow(QWidget):
     def __init__(self, project_name : str, app):
@@ -103,12 +109,14 @@ class GfmWindow(QWidget):
 
         # Create bottom tab panel with Shell and Console tabs
         self.bottom_tabs = QTabWidget()
-        from PySide6.QtWidgets import QTextEdit
         self.shell_tab = QTextEdit()
+        shellTxt = "PySide6 does not support python console.\nI don't think this is a good idea anyway.\n"
+        self.shell_tab.setText(shellTxt)
+        self.shell_tab.setReadOnly(True)
         self.console_tab = QTextEdit()
         self.console_tab.setReadOnly(True)
-        self.bottom_tabs.addTab(self.shell_tab, "Shell")
         self.bottom_tabs.addTab(self.console_tab, "Console")
+        self.bottom_tabs.addTab(self.shell_tab, "Shell")
 
         # Main vertical layout
         main_layout = QVBoxLayout(self)
@@ -164,7 +172,7 @@ class GfmWindow(QWidget):
                 self.tabs.tabBar().setTabTextColor(idx, Qt.black)
                 # self.tabs.setTabText(idx, f"{label}")
 
-    def write_to_console(self, message):
+    def write_to_console(self, message, level=logging.INFO):
         """
         Write a message to the console (or log).
         """
@@ -172,9 +180,9 @@ class GfmWindow(QWidget):
             return
         self.bottom_tabs.setCurrentWidget(self.console_tab)
         print(message)
+        logger.log(level, message)
         self.console_tab.append(message)
-        # In a real application, you might want to use a logging framework instead
-        # of print statements for better control over logging levels and outputs.
+
 
     def on_option_checkbox_changed(self):
         # Delegate to the tab's handler

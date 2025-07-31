@@ -13,6 +13,9 @@ from PlotData import PlotData
 from ScanListModel import ScanListModel
 from GfmWindow import GfmWindow
 
+import logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(module)s - %(message)s')
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     if len(sys.argv) > 1:
