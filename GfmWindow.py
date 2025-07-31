@@ -127,6 +127,7 @@ class GfmWindow(QWidget):
         self.shell_tab.setReadOnly(True)
         self.console_tab = QTextEdit()
         self.console_tab.setReadOnly(True)
+        self.console_tab.setFontFamily("Courier New")
         self.bottom_tabs.addTab(self.console_tab, "Console")
         self.bottom_tabs.addTab(self.shell_tab, "Shell")
 
@@ -193,7 +194,7 @@ class GfmWindow(QWidget):
 
         self.status_bar.showMessage("Ready")
 
-    def write_to_console(self, message, level=logging.INFO):
+    def write_to_console(self, message, level=logging.INFO, color=None):
         """
         Write a message to the console (or log).
         """
@@ -202,7 +203,14 @@ class GfmWindow(QWidget):
         self.bottom_tabs.setCurrentWidget(self.console_tab)
         print(message)
         logger.log(level, message)
-        self.console_tab.append(message)
+
+        # black is the default color
+        if color is None:
+            # color = '#00000000'
+            color = '#FFFF'
+
+        # Append the message in the specified color to the console_tab
+        self.console_tab.append(f'<span style="color:{color};">{message}</span>')
 
 
     # def on_option_checkbox_changed(self):

@@ -93,6 +93,32 @@ class SpectralTab(OptionsTab):
         title = f"{scanInfo['project']}:{scanInfo['scan']}:{self.integration}"
         self.update_plot(x, y_list, optionsKeys, x_label, "Counts", title)
 
+        # Get the colors used for each line in the plot
+        colors_used = []
+        if self.canvas and hasattr(self.canvas, "figure"):
+            for ax in self.canvas.figure.axes:
+                for line in ax.get_lines():
+                    colors_used.append(line.get_color())
+        self.write_spectra_to_console(optionsKeys, colors_used)
+
+    def write_spectra_to_console(self, optionsKeys, colors):
+        """
+        For each spectra, write color coded details to console.
+        This should be like an ASCII table of spectra info.
+        """
+        self.write_to_console(f"Spectra for scan {self.scanData.getScanNumByIndex(self.currentScanIndex)}:")
+        col_width = 12  # You can adjust this width as needed
+        header = "|"
+        header += " | ".join(label.ljust(col_width) for label in self.labels)
+        header += "|"
+        self.write_to_console(f"  {header}")
+        for key, color in zip(optionsKeys, colors):
+            # print("key: ", key)
+            line = "|"
+            line += " | ".join(str(part).ljust(col_width) for part in key)
+            line += " |"
+            self.write_to_console(f"  {line}", color=color)
+
 
 
 

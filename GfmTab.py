@@ -15,6 +15,7 @@ class GfmTab(QWidget):
     def __init__(self, parent, scanData : ScanData, name : str, scanTypes : list):
         super().__init__(parent)
 
+        self.gfm_window = parent
         self.write_to_console(f"Initializing GfmTab: {name}"
                               )
         self.scanData = scanData
@@ -62,10 +63,10 @@ class GfmTab(QWidget):
         parent_layout.addWidget(self.toolbar)
         parent_layout.addWidget(self.canvas)
 
-    def write_to_console(self, message):
+    def write_to_console(self, message, color=None):
         """
         Write a message to the console (or log).
         """
 
-        self.parent().write_to_console(message)
+        self.gfm_window.write_to_console(message, color=color)
 
