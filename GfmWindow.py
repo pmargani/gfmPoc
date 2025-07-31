@@ -14,6 +14,7 @@ from ScanData import ScanData
 from PlotData import PlotData
 from ScanListModel import ScanListModel
 from ContinuumTab import ContinuumTab
+from PointingTab import PointingTab
 
 class GfmWindow(QWidget):
     def __init__(self, project_name : str):
@@ -59,12 +60,8 @@ class GfmWindow(QWidget):
         self.tabs.addTab(self.continuum_tab, "Continuum")
 
 
-        # Create the pointing tab (placeholder)
-        self.pointing_tab = QWidget()
-        pointing_layout = QVBoxLayout(self.pointing_tab)
-        self.pointing_label = QLabel("Pointing tab content goes here.")
-        pointing_layout.addWidget(self.pointing_label)
-        self.pointing_tab.setLayout(pointing_layout)
+        # Create the pointing tab (now a class)
+        self.pointing_tab = PointingTab(parent=self)
         self.tabs.addTab(self.pointing_tab, "Pointing")
 
         # Create the focus tab (placeholder)
