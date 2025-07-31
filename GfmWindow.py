@@ -2,19 +2,13 @@
 
 import logging
 
-from email.mime import message
-import sys
-import itertools
-
 from PySide6.QtWidgets import QWidget, QListView, QTextEdit, QHBoxLayout, QVBoxLayout, QSplitter, QTabWidget
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QCheckBox
 from PySide6.QtGui import QGuiApplication
-from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout
+from PySide6.QtWidgets import QWidget, QVBoxLayout
 from PySide6.QtWidgets import QTextEdit
 from PySide6.QtWidgets import QStatusBar
-
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas, NavigationToolbar2QT
+from PySide6.QtWidgets import QFileDialog
 
 from ScanData import ScanData
 from PlotData import PlotData
@@ -24,7 +18,6 @@ from PointingTab import PointingTab
 from FocusTab import FocusTab
 from SpectralTab import SpectralTab
 from MenuBar import MenuBar
-from PySide6.QtWidgets import QFileDialog
 
 logger = logging.getLogger(__name__)
 

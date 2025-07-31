@@ -1,7 +1,6 @@
 "A module for the PointingTab Class"
 
 from PySide6.QtWidgets import QVBoxLayout, QLabel
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas, NavigationToolbar2QT
 
 from GfmTab import GfmTab
 from ScanData import ScanData

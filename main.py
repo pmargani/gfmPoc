@@ -2,15 +2,8 @@
 
 import sys
 
-from PySide6.QtWidgets import QApplication, QWidget, QListView, QTextEdit, QHBoxLayout, QVBoxLayout, QSplitter
-from PySide6.QtCore import Qt, QAbstractListModel, QModelIndex
+from PySide6.QtWidgets import QApplication
 
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas, NavigationToolbar2QT
-
-from ScanData import ScanData
-from PlotData import PlotData
-from ScanListModel import ScanListModel
 from GfmWindow import GfmWindow
 
 import logging

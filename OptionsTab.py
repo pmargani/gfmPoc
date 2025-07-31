@@ -3,15 +3,9 @@
 import itertools
 
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QGroupBox, QCheckBox
-# from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas, NavigationToolbar2QT
-# from PySide6.QtWidgets import QSpinBox, QLabel
-# from PySide6.QtWidgets import QRadioButton, QButtonGroup
-
-
 
 from GfmTab import GfmTab
 from ScanData import ScanData
-from PlotData import PlotData
 
 class OptionsTab(GfmTab):
 

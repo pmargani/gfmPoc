@@ -1,6 +1,6 @@
 "Dialog for choosing polarization in the Pointing tab."
 
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton, QMessageBox
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel
 
 class ContCalibOptionsDialog(QDialog):
     def __init__(self, name, parent, polarization):
@@ -29,12 +29,4 @@ class ContCalibOptionsDialog(QDialog):
         button_box.rejected.connect(self.reject)
         layout.addWidget(button_box)
 
-    # @staticmethod
-    # def get_polarization(parent=None):
-    #     dialog = PointingOptionsDialog(parent)
-    #     result = dialog.exec()
-    #     if result == QDialog.Accepted:
-    #         pol = 'X' if dialog.radio_x.isChecked() else 'Y'
-    #         QMessageBox.information(parent or dialog, "Pointing Tab", f"You chose {pol} polarization.")
-    #         return pol
-    #     return None
+
