@@ -40,10 +40,10 @@ class ContinuumTab(GfmTab):
         layout.addWidget(self.options_panel)
         self.setLayout(layout)
 
-    def display_scan_data(self, currentSelection):
+    def display_scan_data(self, currentScanIndex):
         "Called in response to a scan selection change.  Displays the default plot"
         # save which scan index was selected
-        self.currentScanIndex = currentSelection.row()
+        self.currentScanIndex = currentScanIndex
         # get the scan data by index
         scan = self.scanData.getScanDataByIndex(self.currentScanIndex)
         # use the scan data to update the text edit and options panel

@@ -21,8 +21,12 @@ class ContCalibTab(GfmTab):
         layout.addWidget(self.canvas)
         self.setLayout(layout)
 
-    def display_scan_data(self, currentSelection):
-        scanIndex = currentSelection.row()
+        self.polarization = 'X'  # Default polarization
+
+    def display_scan_data(self, currentScanIndex):
+        # save which scan index was selected
+        self.currentScanIndex = currentScanIndex
+        scanIndex = currentScanIndex
         self.label.setText(f"Pointing tab: scan index {scanIndex}")
         # Get scanData from parent (GfmWindow)
         # scanData = getattr(self.parent, 'scanData', None)
@@ -36,7 +40,7 @@ class ContCalibTab(GfmTab):
             # Try to find the key for Y polarization
             opts = self.scanData.getScanOptions(scanIndex)
 
-            pol = 'Y'  # Assuming we want Y polarization
+            pol = self.polarization
             key = self.get_key_for_y_pol('Y', opts)
             y = self.scanData.getScanYDataByIndex(scanIndex, key)
             # Plot using PlotData
@@ -72,3 +76,16 @@ class ContCalibTab(GfmTab):
             else:
                 key.append(vals[0])
         return tuple(key)
+
+    def set_polarization(self, pol):
+        """
+        Set the polarization for the tab.
+        This method can be called to change the polarization dynamically.
+        """
+        if pol not in ['X', 'Y']:
+            raise ValueError("Polarization must be 'X' or 'Y'.")
+        self.polarization = pol
+        # self.label.setText(f"Polarization set to {pol}.")
+        # Optionally, you can trigger a replot or update based on the new polarization
+        self.display_scan_data(self.currentScanIndex)
+        # Note: currentSelection should be set to the currently selected scan in the parent widget

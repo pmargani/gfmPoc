@@ -130,7 +130,7 @@ class GfmWindow(QWidget):
             idx = self.tabs.indexOf(tab)
             if scanType in tab.scanTypes:
                 if hasattr(tab, 'display_scan_data'):
-                    tab.display_scan_data(current)
+                    tab.display_scan_data(current.row())
                 self.tabs.setCurrentWidget(tab)
                 self.tabs.tabBar().setTabTextColor(idx, Qt.blue)
                 # self.tabs.setTabText(idx, f"<b>{label}</b>")
