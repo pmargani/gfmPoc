@@ -12,6 +12,7 @@ from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QCheckBox
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout
 from PySide6.QtWidgets import QTextEdit
+from PySide6.QtWidgets import QStatusBar
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas, NavigationToolbar2QT
 
@@ -101,6 +102,13 @@ class GfmWindow(QWidget):
         )
         self.tabs.addTab(self.spectral_tab, "Spectral")
 
+        self.gfm_tabs = [
+            self.continuum_tab,
+            self.pointing_tab,
+            self.focus_tab,
+            self.spectral_tab,
+        ]
+
         # separate tabs and the scan list with a splitter
         splitter = QSplitter(Qt.Horizontal)
         splitter.addWidget(self.scans_widget)
@@ -123,6 +131,12 @@ class GfmWindow(QWidget):
         main_layout.setMenuBar(self.menubar)
         main_layout.addWidget(splitter)
         main_layout.addWidget(self.bottom_tabs)
+
+        # Add status bar at the bottom
+        self.status_bar = QStatusBar()
+        self.status_bar.showMessage("Ready")
+        main_layout.addWidget(self.status_bar)
+
         self.setLayout(main_layout)
 
     def open_project(self):
@@ -150,16 +164,16 @@ class GfmWindow(QWidget):
         # scanType = self.scanData.getScanDataByIndex(scanIndex)['scanType']
         scanInfo = self.scanData.getScanDataByIndex(scanIndex)
         scanType = scanInfo['scanType'] if 'scanType' in scanInfo else 'unknown'
+
+        # update UI to indicate progress
         self.write_to_console(f"Displaying scan data for scan {scanInfo['scan']} of type {scanType}")
-        tabs = [
-            self.continuum_tab,
-            self.pointing_tab,
-            self.focus_tab,
-            self.spectral_tab,
-        ]
+        status_message = f"Processing scan {scanInfo['scan']} of type {scanType}"
+        self.status_bar.showMessage(status_message)
+
+
         # desc = self.scanData.getScanFullDesc(scanIndex)
 
-        for tab in tabs:
+        for tab in self.gfm_tabs:
             idx = self.tabs.indexOf(tab)
             if scanType in tab.scanTypes:
                 if hasattr(tab, 'display_scan_data'):
@@ -171,6 +185,8 @@ class GfmWindow(QWidget):
                 # reset txt to normal
                 self.tabs.tabBar().setTabTextColor(idx, Qt.black)
                 # self.tabs.setTabText(idx, f"{label}")
+
+        self.status_bar.showMessage("Ready")
 
     def write_to_console(self, message, level=logging.INFO):
         """
