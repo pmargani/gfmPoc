@@ -3,11 +3,15 @@
 import itertools
 
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QGroupBox, QCheckBox
-from GfmTab import GfmTab
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas, NavigationToolbar2QT
+from PySide6.QtWidgets import QSpinBox, QLabel
+from PySide6.QtWidgets import QRadioButton, QButtonGroup
+import numpy as np
 
 from ScanData import ScanData
 from PlotData import PlotData
+from GfmTab import GfmTab
+
 
 class SpectralTab(GfmTab):
 
@@ -43,6 +47,14 @@ class SpectralTab(GfmTab):
         # these are the options available for spectral data
         self.labels = ["beams", "pols", "phases", "IFs"]
 
+        # TBF: our data doesn't have multiple integrations, faking it
+        self.numIntegrations = 3
+        self.integration = 0
+
+        # TBF: we also don't have the freq data so fake this as well
+        self.xUnits = "Channels"
+        self.xFreqRange = (1620, 1650)  # MHz
+
     def display_scan_data(self, currentScanIndex):
         "Called in response to a scan selection change.  Displays the default plot"
         # save which scan index was selected
@@ -77,6 +89,46 @@ class SpectralTab(GfmTab):
             group_box.setLayout(v_layout)
             self.options_layout.addWidget(group_box)
             self.options_checkboxes[label] = checkboxes
+
+        # Add a widget for selecting integration
+        integration_layout = QHBoxLayout()
+        integration_label = QLabel("integration")
+        self.integration_spinbox = QSpinBox()
+        self.integration_spinbox.setMinimum(0)
+        self.integration_spinbox.setMaximum(self.numIntegrations - 1)
+        self.integration_spinbox.setValue(self.integration)
+        self.integration_spinbox.setSingleStep(1)
+        self.integration_spinbox.valueChanged.connect(lambda val: setattr(self, "integration", val))
+        self.integration_spinbox.valueChanged.connect(self.on_option_checkbox_changed)
+        integration_layout.addWidget(integration_label)
+        integration_layout.addWidget(self.integration_spinbox)
+        self.options_layout.addLayout(integration_layout)
+
+        # Add radio buttons for "Channels" and "Frequency" view
+        view_layout = QHBoxLayout()
+        view_label = QLabel("View")
+        view_layout.addWidget(view_label)
+
+        self.channels_radio = QRadioButton("Channels")
+        self.frequency_radio = QRadioButton("Frequency")
+        self.channels_radio.setChecked(True)
+
+        self.view_button_group = QButtonGroup(self.options_panel)
+        self.view_button_group.addButton(self.channels_radio)
+        self.view_button_group.addButton(self.frequency_radio)
+        self.view_button_group.buttonClicked.connect(self.on_option_checkbox_changed)
+
+        view_layout.addWidget(self.channels_radio)
+        view_layout.addWidget(self.frequency_radio)
+
+        self.options_layout.addLayout(view_layout)
+
+        # now add a textbox for which integration to plot
+        # self.integration_text_edit = QTextEdit()
+        # self.integration_text_edit.setText(str(self.integration))
+        # self.integration_text_edit.setMaximumHeight(30)
+        # self.options_layout.addWidget(self.integration_text_edit)
+        #
         # Trigger the checkbox change handler to update the plot
         self.on_option_checkbox_changed()
 
@@ -113,12 +165,26 @@ class SpectralTab(GfmTab):
         "Uses ScanData and PlotData to create a matplotlib figure and refreshes the canvas"
         print("plot_data: ", scanIndex)
         self._last_scan_index = scanIndex
+
+
         x = self.scanData.getScanXDataByIndex(scanIndex)
         y_list = [self.scanData.getScanYDataByIndex(scanIndex, key) for key in optionsKeys]
+        x_label = "Channels"
 
-        scanInfo = self.scanData.getScanFullDesc(scanIndex)
-        title = f"{scanInfo['project']}:{scanInfo['scan']}"
-        self.update_plot(x, y_list, optionsKeys, "Channels", "Counts", title)
+        # how we plot data depends on the view selected
+        if self.frequency_radio.isChecked():
+            x_label = "Frequency (MHz)"
+            # TBF: kluge - we don't have freq. data in pickle file yet
+            # convert x data to frequency using the xFreqRange
+            x = np.asarray(x)
+            # Avoid division by zero if x is all zeros
+            x_max = x.max() if x.size > 0 else 1
+            x = self.xFreqRange[0] + (self.xFreqRange[1] - self.xFreqRange[0]) * (x / x_max)
+            y_list = [np.asarray(y)[::-1] for y in y_list]
+
+        scanInfo = self.scanData.getScanDataByIndex(scanIndex)
+        title = f"{scanInfo['project']}:{scanInfo['scan']}:{self.integration}"
+        self.update_plot(x, y_list, optionsKeys, x_label, "Counts", title)
 
 
 
