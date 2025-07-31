@@ -7,14 +7,14 @@ from GfmTab import GfmTab
 from ScanData import ScanData
 
 
-class PointingTab(GfmTab):
+class ContCalibTab(GfmTab):
     """
-    A class for handling all Pointing tab content in GFM.
+    A parent class for handling all Continuum Calibration tabs content in GFM.
     """
     def __init__(self, parent, scanData : ScanData, name : str, scanTypes : list):
         super().__init__(parent, scanData, name, scanTypes)
         layout = QVBoxLayout(self)
-        self.label = QLabel("Pointing tab content goes here.")
+        self.label = QLabel(f"{self.name} tab content goes here.")
         layout.addWidget(self.label)
 
         layout.addWidget(self.toolbar)

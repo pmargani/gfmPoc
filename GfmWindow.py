@@ -15,6 +15,7 @@ from PlotData import PlotData
 from ScanListModel import ScanListModel
 from ContinuumTab import ContinuumTab
 from PointingTab import PointingTab
+from FocusTab import FocusTab
 
 class GfmWindow(QWidget):
     def __init__(self, project_name : str):
@@ -51,6 +52,7 @@ class GfmWindow(QWidget):
         self.firstScanSelected = False # TBF: kluge to avoid displaying the first scan on startup
 
 
+        # *** create tabs:
 
         # Create the continuum tab and add it to the tab widget
         self.continuum_tab = ContinuumTab(
@@ -72,13 +74,15 @@ class GfmWindow(QWidget):
         self.tabs.addTab(self.pointing_tab, "Pointing")
 
         # Create the focus tab (placeholder)
-        self.focus_tab = QWidget()
-        focus_layout = QVBoxLayout(self.focus_tab)
-        self.focus_label = QLabel("Focus tab content goes here.")
-        focus_layout.addWidget(self.focus_label)
-        self.focus_tab.setLayout(focus_layout)
+        self.focus_tab = FocusTab(
+            self,
+            self.scanData,
+            "Focus",
+            ["Focus"],
+        )
         self.tabs.addTab(self.focus_tab, "Focus")
 
+        # separate tabs and the scan list with a splitter
         splitter = QSplitter(Qt.Horizontal)
         splitter.addWidget(self.scans_widget)
         splitter.addWidget(self.tabs)
@@ -98,7 +102,7 @@ class GfmWindow(QWidget):
         tabs = [
             self.continuum_tab,
             self.pointing_tab,
-            # self.focus_tab
+            self.focus_tab
         ]
         # desc = self.scanData.getScanFullDesc(scanIndex)
 
