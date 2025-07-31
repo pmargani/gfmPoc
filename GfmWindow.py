@@ -94,19 +94,43 @@ class GfmWindow(QWidget):
         continuumTypes = ['Peak', 'Focus']
         peakTypes = ['Peak']
         focusTypes = ['Focus']
+        tabs = [
+            ("Continuum", continuumTypes, self.continuum_tab),
+            ("Pointing", peakTypes, self.pointing_tab),
+            ("Focus", focusTypes, self.focus_tab)
+        ]
         desc = self.scanData.getScanFullDesc(scanIndex)
+
+        for label, tabTypes, tab in tabs:
+            idx = self.tabs.indexOf(tab)
+            if scanType in tabTypes:
+                if hasattr(tab, 'display_scan_data'):
+                    tab.display_scan_data(current)
+                self.tabs.setCurrentWidget(tab)
+                self.tabs.tabBar().setTabTextColor(idx, Qt.blue)
+                # self.tabs.setTabText(idx, f"<b>{label}</b>")
+            else:
+                # reset txt to normal
+                self.tabs.tabBar().setTabTextColor(idx, Qt.black)
+                # self.tabs.setTabText(idx, f"{label}")
         # Delegate scan display to the tabs
-        if scanType in continuumTypes:
-            self.continuum_tab.display_scan_data(current)
-            self.tabs.setCurrentWidget(self.continuum_tab)
-        if scanType in peakTypes:
-            # self.peak_tab.display_scan_data(current, previous)
-            self.pointing_label.setText(f"Peak scan type detected. {desc}")
-            self.tabs.setCurrentWidget(self.pointing_tab)
-        if scanType in focusTypes:
-            # self.focus_tab.display_scan_data(current, previous)
-            self.focus_label.setText(f"Focus scan type detected. {desc}")
-            self.tabs.setCurrentWidget(self.focus_tab)
+        # if scanType in continuumTypes:
+        #     self.continuum_tab.display_scan_data(current)
+        #     self.tabs.setCurrentWidget(self.continuum_tab)
+        #     # Highlight the tab name for the selected scan type
+        #     self.tabs.setTabText(idx, f"<b>Continuum</b>")
+        # else:
+        #     # Reset other tab names
+        #     self.tabs.setTabText(self.tabs.indexOf(self.pointing_tab), "Pointing")
+        #     self.tabs.setTabText(self.tabs.indexOf(self.focus_tab), "Focus")
+        # if scanType in peakTypes:
+        #     # self.peak_tab.display_scan_data(current, previous)
+        #     self.pointing_label.setText(f"Peak scan type detected. {desc}")
+        #     self.tabs.setCurrentWidget(self.pointing_tab)
+        # if scanType in focusTypes:
+        #     # self.focus_tab.display_scan_data(current, previous)
+        #     self.focus_label.setText(f"Focus scan type detected. {desc}")
+        #     self.tabs.setCurrentWidget(self.focus_tab)
         # else:
         #     print(f"Unknown scan type: {scanType}. No action taken.")
 
