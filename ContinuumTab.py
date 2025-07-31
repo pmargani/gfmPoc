@@ -19,7 +19,6 @@ class ContinuumTab(QWidget):
         parent,
         scanData : ScanData,
         model,
-        text_edit=None,
         canvas=None,
         toolbar=None,
         options_panel=None,
@@ -29,8 +28,6 @@ class ContinuumTab(QWidget):
         super().__init__(parent)
         self.scanData = scanData
         self.model = model
-        # TBF: why the options for passing in these widgets?
-        self.text_edit = text_edit or QTextEdit()
         self.canvas = canvas or FigureCanvas()
         self.toolbar = toolbar or NavigationToolbar2QT(self.canvas, self)
         self.options_panel = options_panel or QWidget()
@@ -44,7 +41,6 @@ class ContinuumTab(QWidget):
         plot_panel.setLayout(plot_layout)
         layout = QHBoxLayout(self)
         vbox = QVBoxLayout()
-        vbox.addWidget(self.text_edit)
         vbox.addWidget(plot_panel)
         layout.addLayout(vbox)
         layout.addWidget(self.options_panel)
@@ -58,8 +54,7 @@ class ContinuumTab(QWidget):
         scan = self.model.getScanDataByIndex(self.currentScanIndex)
         # use the scan data to update the text edit and options panel
         print(f"Displaying scan data for: {scan['scan']}, type: {type(scan)}")
-        value = f"proj: {self.scanData.project}, scan: {scan['scan']}"
-        self.text_edit.setPlainText(value)
+        # value = f"proj: {self.scanData.project}, scan: {scan['scan']}"  # removed text_edit
         # Clear previous options
         while self.options_layout.count():
             item = self.options_layout.takeAt(0)
