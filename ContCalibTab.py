@@ -31,14 +31,16 @@ class ContCalibTab(GfmTab):
             return
         # Try to get Y polarization data
         try:
+            scanNum = self.scanData.getScanNumByIndex(scanIndex)
             x = self.scanData.getScanXDataByIndex(scanIndex)
             # Try to find the key for Y polarization
             opts = self.scanData.getScanOptions(scanIndex)
 
+            pol = 'Y'  # Assuming we want Y polarization
             key = self.get_key_for_y_pol('Y', opts)
             y = self.scanData.getScanYDataByIndex(scanIndex, key)
             # Plot using PlotData
-            self.update_plot(x, [y], ['Y'], "Time", "Power", f"Scan {scanIndex} - Y Pol")
+            self.update_plot(x, [y], ['Y'], "Time", "Power", f"Scan {scanNum} - {pol} Pol")
         except Exception as e:
             self.label.setText(f"Error plotting Y pol: {e}")
 

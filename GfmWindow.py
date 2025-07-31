@@ -37,7 +37,7 @@ class GfmWindow(QWidget):
             self.resize(1200, 400)
 
         # Initialize components
-        fn = "projData.pkl"
+        fn = "projData2.pkl"
         self.scanData = ScanData(fn, self.project_name)
 
 

@@ -15,6 +15,16 @@ class ScanData:
         for i, scanInfo in enumerate(self.data[self.project]):
             self.scanNumToIndex[scanInfo['scan']] = i
 
+    def getScanIndexByScanNum(self, scanNum):
+        """returns the index of the scan with the given scan number"""
+        return self.scanNumToIndex.get(scanNum, -1)
+
+    def getScanNumByIndex(self, index):
+        """returns the scan number for the given index"""
+        if 0 <= index < self.numScans:
+            return self.data[self.project][index]['scan']
+        return None
+
     def getScanDataByIndex(self, index):
         """returns the scan data for the given index"""
         scan = self.data[self.project][index]
@@ -22,7 +32,11 @@ class ScanData:
 
     def getScanOptions(self, scanIndex):
         """returns the scan options for the given scan index"""
-        ydata = self.data[self.project][scanIndex]['ydata']
+        # ydata = self.data[self.project][scanIndex]['ydata']
+        d = self.data[self.project][scanIndex]
+        # TBF: bugs in pkl file
+        key = "ydata" if "ydata" in d else "ys"
+        ydata = d[key]
         keys = list(ydata.keys())
         options = {}
         labels = ["beams", "pols", "phases", "freqs"]
@@ -40,19 +54,30 @@ class ScanData:
 
     def getScanYDataByIndex(self, scanIndex, key):
         """returns the y data for the given scan index and key"""
-        ydata = self.data[self.project][scanIndex]['ydata']
+        d = ydata = self.data[self.project][scanIndex]
+        k = "ydata" if "ydata" in d else "ys"
+        ydata = d[k]
         return ydata[key]
 
     def getScanFullDesc(self, scan_index):
         """returns a full description of the scan"""
         scan = self.data[self.project][scan_index]
-        desc = f"{scan['scan']}:{scan['source']} {scan['description']}"
+        src = scan['source'] if 'source' in scan else 'unknown'
+        desc = f"{scan['scan']}:{src} {scan['description']}"
         return desc
 
     def getScanShortDesc(self, scan_index):
         """returns a short description of the scan"""
         scan = self.data[self.project][scan_index]
-        desc = f"{scan['scan']}:{scan['source']}"
+        src = scan['source'] if 'source' in scan else 'unknown'
+        desc = f"{scan['scan']}:{src} {scan['description']}"
+        return desc
+
+    def getScanShortDesc(self, scan_index):
+        """returns a short description of the scan"""
+        scan = self.data[self.project][scan_index]
+        src = scan['source'] if 'source' in scan else 'unknown'
+        desc = f"{scan['scan']}:{src}"
         return desc
 
     def __repr__(self):
