@@ -1,0 +1,185 @@
+@startuml
+
+title GFM POC Classes
+
+class ContCalibOptionsDialog {
+        name
+    polarization
+    radio_x
+    radio_y
+    __init__()
+}
+Qt.QDialog <|-- ContCalibOptionsDialog
+
+class ContCalibTab {
+    display_scan_data()
+    get_key_for_pol()
+    set_polarization()
+        currentScanIndex
+    polarization
+    __init__()
+}
+GfmTab <|-- ContCalibTab
+
+class ContinuumTab {
+        __init__()
+}
+OptionsTab <|-- ContinuumTab
+
+class FocusOptionsDialog {
+    get_polarization()
+        __init__()
+}
+ContCalibOptionsDialog <|-- FocusOptionsDialog
+
+class FocusTab {
+        __init__()
+}
+ContCalibTab <|-- FocusTab
+
+class GfmTab {
+    display_scan_data()
+    update_plot()
+    write_to_console()
+        gfm_window
+    scanData
+    name
+    scanTypes
+    canvas
+    toolbar
+    currentScanIndex
+    canvas
+    toolbar
+    __init__()
+}
+Qt.QWidget <|-- GfmTab
+
+class GfmWindow {
+    open_project()
+    display_scan_data()
+    write_to_console()
+        project_name
+    scanData
+    menubar
+    tabs
+    scans_widget
+    model
+    continuum_tab
+    pointing_tab
+    focus_tab
+    spectral_tab
+    bottom_tabs
+    shell_tab
+    console_tab
+    status_bar
+    scanData
+    model
+    firstScanSelected
+    __init__()
+}
+Qt.QWidget <|-- GfmWindow
+
+class MenuBar {
+    show_help_dialog()
+    show_pointing_polarization_dialog()
+    show_focus_polarization_dialog()
+    show_continuum_options_dialog()
+        gfm_window
+    continuum_action
+    pointing_action
+    focus_action
+    open_action
+    exit_action
+    help_action
+    __init__()
+}
+Qt.QMenuBar <|-- MenuBar
+
+class OptionsTab {
+    display_scan_data()
+    add_additional_options()
+    on_option_checkbox_changed()
+    plot_data()
+        options_panel
+    options_layout
+    currentScanIndex
+    optionKeys
+    _last_scan_index
+    __init__()
+}
+GfmTab <|-- OptionsTab
+
+class PlotData {
+    plot()
+        x
+    y_list
+    labels
+    xlabel
+    ylabel
+    title
+    __init__()
+}
+
+class PointingOptionsDialog {
+    get_polarization()
+        __init__()
+}
+ContCalibOptionsDialog <|-- PointingOptionsDialog
+
+class PointingTab {
+    display_scan_data()
+        peakScanIndex
+    peakScanIndex
+    peakScanIndex
+    __init__()
+}
+ContCalibTab <|-- PointingTab
+
+class ScanData {
+    getScanIndexByScanNum()
+    getScanNumByIndex()
+    getScanDataByIndex()
+    getScanOptions()
+    getScanXDataByIndex()
+    getScanYDataByIndex()
+    getScanFullDesc()
+    getScanShortDesc()
+    __repr__()
+        data
+    project
+    numScans
+    __init__()
+}
+
+class ScanListModel {
+    rowCount()
+    data()
+    getScanDataByIndex()
+        scanData
+    __init__()
+}
+Qt.QAbstractListModel <|-- ScanListModel
+
+class SpectralTab {
+    add_additional_options()
+    plot_data()
+    write_spectra_to_console()
+        numIntegrations
+    integration
+    integration_spinbox
+    channels_radio
+    frequency_radio
+    view_button_group
+    _last_scan_index
+    __init__()
+}
+OptionsTab <|-- SpectralTab
+
+ContinuumTab *-- GfmWindow
+PointingTab *-- GfmWindow
+FocusTab *-- GfmWindow
+SpectralTab *-- GfmWindow
+ScanData *-- GfmWindow
+ScanListModel *-- GfmWindow
+
+@enduml

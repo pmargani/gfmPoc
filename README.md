@@ -20,3 +20,7 @@ python main.py
 ```
 
 Replace `main.py` with your script name if different.
+
+## Design
+
+![GFM POC Classes](gfmPocClasses.png)
