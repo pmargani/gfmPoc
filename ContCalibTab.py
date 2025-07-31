@@ -13,9 +13,6 @@ class ContCalibTab(GfmTab):
     def __init__(self, parent, scanData : ScanData, name : str, scanTypes : list):
         super().__init__(parent, scanData, name, scanTypes)
         layout = QVBoxLayout(self)
-        self.label = QLabel(f"{self.name} tab content goes here.")
-        layout.addWidget(self.label)
-
         layout.addWidget(self.toolbar)
         layout.addWidget(self.canvas)
         self.setLayout(layout)
@@ -29,11 +26,9 @@ class ContCalibTab(GfmTab):
         # save which scan index was selected
         self.currentScanIndex = currentScanIndex
         scanIndex = currentScanIndex
-        self.label.setText(f"Pointing tab: scan index {scanIndex}")
         # Get scanData from parent (GfmWindow)
         # scanData = getattr(self.parent, 'scanData', None)
         if self.scanData is None:
-            self.label.setText("No scan data available.")
             return
         # Try to get Y polarization data
         try:
@@ -43,14 +38,14 @@ class ContCalibTab(GfmTab):
             opts = self.scanData.getScanOptions(scanIndex, self.labels)
 
             pol = self.polarization
-            key = self.get_key_for_y_pol(pol, opts)
+            key = self.get_key_for_pol(pol, opts)
             y = self.scanData.getScanYDataByIndex(scanIndex, key)
             # Plot using PlotData
             self.update_plot(x, [y], [pol], "Time", "Power", f"Scan {scanNum} - {pol} Pol")
         except Exception as e:
-            self.label.setText(f"Error plotting Y pol: {e}")
+            pass
 
-    def get_key_for_y_pol(self, pol, opts):
+    def get_key_for_pol(self, pol, opts):
         # Find the key for polarization (case-insensitive)
         pol_key = None
         for k in opts:
@@ -58,7 +53,6 @@ class ContCalibTab(GfmTab):
                 pol_key = k
                 break
         if pol_key is None:
-            self.label.setText("No polarization data available.")
             return
         y_pols = opts[pol_key]
         # Find the value for the given polarization
@@ -68,7 +62,6 @@ class ContCalibTab(GfmTab):
                 y_val = v
                 break
         if y_val is None:
-            self.label.setText(f"No {pol} polarization found.")
             return
         # Build the key tuple for Y polarization (use first values for other options)
         key = []
