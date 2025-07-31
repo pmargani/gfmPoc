@@ -3,14 +3,7 @@ from PySide6.QtWidgets import QMenuBar, QMenu, QMessageBox
 from PySide6.QtGui import QAction
 
 class MenuBar(QMenuBar):
-    def show_pointing_polarization_dialog(self):
-        from PointingOptionsDialog import PointingOptionsDialog
-        pol = PointingOptionsDialog.get_polarization(self, self.gfm_window.pointing_tab.polarization)
-        print(f"Selected polarization: {pol} setting to window: {self.window}")
-        self.gfm_window.pointing_tab.set_polarization(pol)
 
-    def show_continuum_options_dialog(self):
-        QMessageBox.information(self, "Continuum Tab", "There are no options for the Continuum tab")
 
     """
     This class creates a menu bar for the application with File and Help menus.
@@ -38,6 +31,7 @@ class MenuBar(QMenuBar):
         self.pointing_action = QAction('Pointing', self)
         self.pointing_action.triggered.connect(self.show_pointing_polarization_dialog)
         self.focus_action = QAction('Focus', self)
+        self.focus_action.triggered.connect(self.show_focus_polarization_dialog)
         tabs_menu.addAction(self.continuum_action)
         tabs_menu.addAction(self.pointing_action)
         tabs_menu.addAction(self.focus_action)
@@ -59,3 +53,18 @@ class MenuBar(QMenuBar):
         self.open_action = open_action
         self.exit_action = exit_action
         self.help_action = help_action
+
+    def show_pointing_polarization_dialog(self):
+        from PointingOptionsDialog import PointingOptionsDialog
+        pol = PointingOptionsDialog.get_polarization(self, self.gfm_window.pointing_tab.polarization)
+        print(f"Selected polarization: {pol} setting to window: {self.window}")
+        self.gfm_window.pointing_tab.set_polarization(pol)
+
+    def show_focus_polarization_dialog(self):
+        from FocusOptionsDialog import FocusOptionsDialog
+        pol = FocusOptionsDialog.get_polarization(self, self.gfm_window.focus_tab.polarization)
+        print(f"Selected polarization: {pol} setting to window: {self.window}")
+        self.gfm_window.focus_tab.set_polarization(pol)
+
+    def show_continuum_options_dialog(self):
+        QMessageBox.information(self, "Continuum Tab", "There are no options for the Continuum tab")

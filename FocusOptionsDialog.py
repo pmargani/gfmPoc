@@ -1,20 +1,18 @@
-"Dialog for choosing polarization in the Pointing tab."
-
 from PySide6.QtWidgets import QDialog, QMessageBox
 
 from ContCalibOptionsDialog import ContCalibOptionsDialog
 
-class PointingOptionsDialog(ContCalibOptionsDialog):
+class FocusOptionsDialog(ContCalibOptionsDialog):
     def __init__(self, parent=None, polarization=None):
-        super().__init__("Pointing", parent, polarization)
+        super().__init__("Focus", parent, polarization)
 
 
     @staticmethod
     def get_polarization(parent, polarization):
-        dialog = PointingOptionsDialog(parent, polarization)
+        dialog = FocusOptionsDialog(parent, polarization)
         result = dialog.exec()
         if result == QDialog.Accepted:
             pol = 'X' if dialog.radio_x.isChecked() else 'Y'
-            QMessageBox.information(parent or dialog, "Pointing Tab", f"You chose {pol} polarization.")
+            QMessageBox.information(parent or dialog, "Focus Tab", f"You chose {pol} polarization.")
             return pol
         return None
