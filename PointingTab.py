@@ -32,14 +32,39 @@ class PointingTab(ContCalibTab):
         else:
             self.peakScanIndex = None
 
+        # time to start over?
+        if len(self.plot_history) >= 4:
+            # start over
+            self.plot_history = []
+
+        # this could be the first one, or we just did 4 in a row
+        if self.plot_history == []:
+            super().display_scan_data(currentScanIndex)
+            # Save the current scan's data to history for future use
+            scanNum = self.scanData.getScanNumByIndex(currentScanIndex)
+            x = self.scanData.getScanXDataByIndex(currentScanIndex)
+            opts = self.scanData.getScanOptions(currentScanIndex, self.labels)
+            pol = self.polarization
+            key = self.get_key_for_pol(pol, opts)
+            y = self.scanData.getScanYDataByIndex(currentScanIndex, key)
+            plot_entry = {
+                "scanNum": scanNum,
+                "x": x,
+                "y": y,
+                "pol": pol,
+                "key": key,
+                # "desc": desc,
+            }
+            self.plot_history.append((self.peakScanIndex, plot_entry))
+            return
+
+        # Otherwise we are doing 4 plots in a grid
         # Always create a 2x2 grid of plots
         fig = self.canvas.figure
         fig.clear()
         axes = [fig.add_subplot(2, 2, i+1) for i in range(4)]
 
-        if len(self.plot_history) >= 4:
-            # start over
-            self.plot_history = []
+
 
 
         # Plot previous scans from history in their quadrants
