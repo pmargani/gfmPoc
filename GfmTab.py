@@ -4,14 +4,20 @@ from PySide6.QtWidgets import QWidget
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas, NavigationToolbar2QT
 
 from PlotData import PlotData
+from ScanData import ScanData
 
 class GfmTab(QWidget):
     """
     Base class for all GFM tab widgets.
     Provides a common interface and shared logic for all tabs.
     """
-    def __init__(self, parent=None):
+    def __init__(self, parent, scanData : ScanData, name : str, scanTypes : list):
         super().__init__(parent)
+
+        self.scanData = scanData
+        self.name = name
+        self.scanTypes = scanTypes
+
         # Shared matplotlib canvas and toolbar for all tabs
         self.canvas = FigureCanvas()
         self.toolbar = NavigationToolbar2QT(self.canvas, self)

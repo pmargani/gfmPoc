@@ -51,17 +51,24 @@ class GfmWindow(QWidget):
         self.firstScanSelected = False # TBF: kluge to avoid displaying the first scan on startup
 
 
+
         # Create the continuum tab and add it to the tab widget
         self.continuum_tab = ContinuumTab(
-            parent=self,
-            scanData=self.scanData,
-            model=self.model
+            self,
+            self.scanData,
+            "Continuum",
+            ["Peak", "Focus"],
         )
         self.tabs.addTab(self.continuum_tab, "Continuum")
 
 
         # Create the pointing tab (now a class)
-        self.pointing_tab = PointingTab(parent=self)
+        self.pointing_tab = PointingTab(
+            self,
+            self.scanData,
+            "Pointing",
+            ["Peak"],
+        )
         self.tabs.addTab(self.pointing_tab, "Pointing")
 
         # Create the focus tab (placeholder)
@@ -88,19 +95,16 @@ class GfmWindow(QWidget):
         # get the scan type from the scanIndex
         scanIndex = current.row()
         scanType = self.scanData.getScanDataByIndex(scanIndex)['scanType']
-        continuumTypes = ['Peak', 'Focus']
-        peakTypes = ['Peak']
-        focusTypes = ['Focus']
         tabs = [
-            ("Continuum", continuumTypes, self.continuum_tab),
-            ("Pointing", peakTypes, self.pointing_tab),
-            ("Focus", focusTypes, self.focus_tab)
+            self.continuum_tab,
+            self.pointing_tab,
+            # self.focus_tab
         ]
-        desc = self.scanData.getScanFullDesc(scanIndex)
+        # desc = self.scanData.getScanFullDesc(scanIndex)
 
-        for label, tabTypes, tab in tabs:
+        for tab in tabs:
             idx = self.tabs.indexOf(tab)
-            if scanType in tabTypes:
+            if scanType in tab.scanTypes:
                 if hasattr(tab, 'display_scan_data'):
                     tab.display_scan_data(current)
                 self.tabs.setCurrentWidget(tab)

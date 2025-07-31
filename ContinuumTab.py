@@ -19,17 +19,14 @@ class ContinuumTab(GfmTab):
         self,
         parent,
         scanData : ScanData,
-        model,
-        options_panel=None,
-        options_layout=None,
-        options_checkboxes=None
+        name : str,
+        scanTypes : list,
     ):
-        super().__init__(parent)
-        self.scanData = scanData
-        self.model = model
-        self.options_panel = options_panel or QWidget()
-        self.options_layout = options_layout or QVBoxLayout(self.options_panel)
-        self.options_checkboxes = options_checkboxes or {}
+        super().__init__(parent, scanData, name, scanTypes)
+
+        self.options_panel = QWidget()
+        self.options_layout = QVBoxLayout(self.options_panel)
+        self.options_checkboxes = {}
         self.options_panel.setLayout(self.options_layout)
         plot_panel = QWidget()
         plot_layout = QVBoxLayout(plot_panel)
@@ -48,7 +45,7 @@ class ContinuumTab(GfmTab):
         # save which scan index was selected
         self.currentScanIndex = currentSelection.row()
         # get the scan data by index
-        scan = self.model.getScanDataByIndex(self.currentScanIndex)
+        scan = self.scanData.getScanDataByIndex(self.currentScanIndex)
         # use the scan data to update the text edit and options panel
         print(f"Displaying scan data for: {scan['scan']}, type: {type(scan)}")
         # value = f"proj: {self.scanData.project}, scan: {scan['scan']}"  # removed text_edit
