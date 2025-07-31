@@ -22,13 +22,18 @@ class PlotData:
         print(f"PlotData initialized with {len(y_list)} series, x length: {len(x)}")
         print(f"Labels: {self.labels}")
 
-    def plot(self):
+    def plot(self, ax=None):
         "create the plot figure according to how this object was setup"
+        fig = None
+        if ax is None:
+            # Create a new figure if no axes are provided
+            fig = Figure(figsize=(4, 3))
+            ax = fig.add_subplot(111)
 
-        fig = Figure(figsize=(4, 3))
-        ax = fig.add_subplot(111)
+
         for y, label in zip(self.y_list, self.labels):
-            print(f"Plotting series: {label} with {len(y)} points and {len(self.x)} x points")
+            # print(f"now x is", type(self.x))
+            # print(f"Plotting series: {label} with {len(y)} points and {len(self.x)} x points")
             ax.plot(self.x, y, label=label)
         ax.set_title(self.title)
         ax.set_xlabel(self.xlabel)
