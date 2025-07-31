@@ -42,7 +42,7 @@ This is nearly identical to GFM production
 
 ### Spectral
 
-![Spectral](Spectral.png)
+![Spectral](SpectralTab.png)
 
 This is nearly identical to GFM production, though is missing many of the details provided in the console
 
@@ -51,6 +51,8 @@ This is nearly identical to GFM production, though is missing many of the detail
 ![Focus](FocusTab.png)
 
 This is also pretty close to GFM production, but obviously is missing much of the data provided by the real API that we are only mocking here.  LFC's obviously not produced.  The full options are not offered either, as most of them have to do with data processing, but one can see we have included the Polarization option.
+
+### Pointing
 
 ![Pointing](PointingTab.png)
 
