@@ -1,8 +1,12 @@
 "module for the GFM application window"
 
 import logging
-
-from PySide6.QtWidgets import QWidget, QListView, QTextEdit, QHBoxLayout, QVBoxLayout, QSplitter, QTabWidget
+from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QListView
+from PySide6.QtWidgets import QTextEdit
+from PySide6.QtWidgets import QVBoxLayout
+from PySide6.QtWidgets import QSplitter
+from PySide6.QtWidgets import QTabWidget
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QWidget, QVBoxLayout
@@ -11,7 +15,6 @@ from PySide6.QtWidgets import QStatusBar
 from PySide6.QtWidgets import QFileDialog
 
 from ScanData import ScanData
-from PlotData import PlotData
 from ScanListModel import ScanListModel
 from ContinuumTab import ContinuumTab
 from PointingTab import PointingTab
@@ -22,6 +25,11 @@ from MenuBar import MenuBar
 logger = logging.getLogger(__name__)
 
 class GfmWindow(QWidget):
+
+    """
+    Main window for the GFM application.
+    """
+
     def __init__(self, project_name : str, app):
         super().__init__()
         self.project_name = project_name
@@ -111,7 +119,10 @@ class GfmWindow(QWidget):
         # Create bottom tab panel with Shell and Console tabs
         self.bottom_tabs = QTabWidget()
         self.shell_tab = QTextEdit()
-        shellTxt = "PySide6 does not support python console.\nI don't think this is a good idea anyway.\n"
+        shellTxt = (
+            "PySide6 does not support python console.\n"
+            "I don't think this is a good idea anyway.\n"
+        )
         self.shell_tab.setText(shellTxt)
         self.shell_tab.setReadOnly(True)
         self.console_tab = QTextEdit()
@@ -159,7 +170,8 @@ class GfmWindow(QWidget):
         scanType = scanInfo['scanType'] if 'scanType' in scanInfo else 'unknown'
 
         # update UI to indicate progress
-        self.write_to_console(f"Displaying scan data for scan {scanInfo['scan']} of type {scanType}")
+        msg = f"Displaying scan data for scan {scanInfo['scan']} of type {scanType}"
+        self.write_to_console(msg)
         status_message = f"Processing scan {scanInfo['scan']} of type {scanType}"
         self.status_bar.showMessage(status_message)
 
@@ -193,9 +205,9 @@ class GfmWindow(QWidget):
         self.console_tab.append(message)
 
 
-    def on_option_checkbox_changed(self):
-        # Delegate to the tab's handler
-        self.continuum_tab.on_option_checkbox_changed()
+    # def on_option_checkbox_changed(self):
+    #     # Delegate to the tab's handler
+    #     self.continuum_tab.on_option_checkbox_changed()
 
 
 

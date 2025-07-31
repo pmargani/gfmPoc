@@ -1,10 +1,20 @@
+"A module for the PlotData class"
+
 from matplotlib.figure import Figure
 
 class PlotData:
+
+    """
+    A class to handle detials of how we are plotting our data
+    """
+
     def __init__(self, x, y_list, labels=None, xlabel="", ylabel="", title=""):
         self.x = x
         self.y_list = y_list  # List of y data arrays
-        self.labels = labels if labels is not None else [f"Series {i+1}" for i in range(len(y_list))]
+        if labels is not None:
+            self.labels = labels
+        else:
+            self.labels = [f"Series {i+1}" for i in range(len(y_list))]
         self.xlabel = xlabel
         self.ylabel = ylabel
         self.title = title
@@ -13,6 +23,8 @@ class PlotData:
         print(f"Labels: {self.labels}")
 
     def plot(self):
+        "create the plot figure according to how this object was setup"
+
         fig = Figure(figsize=(4, 3))
         ax = fig.add_subplot(111)
         for y, label in zip(self.y_list, self.labels):

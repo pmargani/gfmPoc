@@ -2,7 +2,7 @@
 
 import itertools
 
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QGroupBox, QCheckBox
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QGroupBox, QCheckBox
 
 from GfmTab import GfmTab
 from ScanData import ScanData
@@ -119,9 +119,12 @@ class OptionsTab(GfmTab):
         x = self.scanData.getScanXDataByIndex(scanIndex)
         y_list = [self.scanData.getScanYDataByIndex(scanIndex, key) for key in optionsKeys]
 
-        self.update_plot(x, y_list, optionsKeys, "Time", "Power", self.scanData.getScanShortDesc(scanIndex))
-
-
-
-
+        self.update_plot(
+            x,
+            y_list,
+            optionsKeys,
+            "Time",
+            "Power",
+            self.scanData.getScanShortDesc(scanIndex)
+        )
 

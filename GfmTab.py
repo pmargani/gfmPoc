@@ -1,7 +1,8 @@
 "A module for the GfmTab base class for GFM tabs."
 
 from PySide6.QtWidgets import QWidget
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas, NavigationToolbar2QT
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT
 
 from PlotData import PlotData
 from ScanData import ScanData
@@ -33,6 +34,10 @@ class GfmTab(QWidget):
         raise NotImplementedError("display_scan_data must be implemented by subclasses.")
 
     def update_plot(self, x, ys, ylabels, xaxis_label, yaxis_label, title):
+        """
+        Update the plot with new data.
+        Uses PlotData to actually create the plot figure, then refreshes the canvas and toolbar.
+        """
         plotter = PlotData(
             x=x,
             y_list=ys,
@@ -62,7 +67,5 @@ class GfmTab(QWidget):
         Write a message to the console (or log).
         """
 
-        # print(message)
-        # In a real application, you might want to use a logging framework instead
-        # of print statements for better control over logging levels and outputs.
         self.parent().write_to_console(message)
+

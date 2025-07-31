@@ -1,3 +1,5 @@
+"A module for the ScanData class"
+
 import pickle
 
 class ScanData:
@@ -71,12 +73,12 @@ class ScanData:
         desc = f"{scan['scan']}:{src} {scan['description']}"
         return desc
 
-    def getScanShortDesc(self, scan_index):
-        """returns a short description of the scan"""
-        scan = self.data[self.project][scan_index]
-        src = scan['source'] if 'source' in scan else 'unknown'
-        desc = f"{scan['scan']}:{src} {scan['description']}"
-        return desc
+    # def getScanShortDesc(self, scan_index):
+    #     """returns a short description of the scan"""
+    #     scan = self.data[self.project][scan_index]
+    #     src = scan['source'] if 'source' in scan else 'unknown'
+    #     desc = f"{scan['scan']}:{src} {scan['description']}"
+    #     return desc
 
     def getScanShortDesc(self, scan_index):
         """returns a short description of the scan"""
