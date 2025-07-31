@@ -16,6 +16,7 @@ from ScanListModel import ScanListModel
 from ContinuumTab import ContinuumTab
 from PointingTab import PointingTab
 from FocusTab import FocusTab
+from SpectralTab import SpectralTab
 from MenuBar import MenuBar
 from PySide6.QtWidgets import QFileDialog
 
@@ -40,7 +41,7 @@ class GfmWindow(QWidget):
             self.resize(1200, 400)
 
         # Initialize components
-        fn = "projData2.pkl"
+        fn = "projData3.pkl"
         self.scanData = ScanData(fn, self.project_name)
 
         self.menubar = MenuBar(self, app, self.open_project)
@@ -86,6 +87,14 @@ class GfmWindow(QWidget):
         )
         self.tabs.addTab(self.focus_tab, "Focus")
 
+        self.spectral_tab = SpectralTab(
+            self,
+            self.scanData,
+            "Spectral",
+            ["spectral"],
+        )
+        self.tabs.addTab(self.spectral_tab, "Spectral")
+
         # separate tabs and the scan list with a splitter
         splitter = QSplitter(Qt.Horizontal)
         splitter.addWidget(self.scans_widget)
@@ -122,7 +131,8 @@ class GfmWindow(QWidget):
         tabs = [
             self.continuum_tab,
             self.pointing_tab,
-            self.focus_tab
+            self.focus_tab,
+            self.spectral_tab,
         ]
         # desc = self.scanData.getScanFullDesc(scanIndex)
 
@@ -138,26 +148,7 @@ class GfmWindow(QWidget):
                 # reset txt to normal
                 self.tabs.tabBar().setTabTextColor(idx, Qt.black)
                 # self.tabs.setTabText(idx, f"{label}")
-        # Delegate scan display to the tabs
-        # if scanType in continuumTypes:
-        #     self.continuum_tab.display_scan_data(current)
-        #     self.tabs.setCurrentWidget(self.continuum_tab)
-        #     # Highlight the tab name for the selected scan type
-        #     self.tabs.setTabText(idx, f"<b>Continuum</b>")
-        # else:
-        #     # Reset other tab names
-        #     self.tabs.setTabText(self.tabs.indexOf(self.pointing_tab), "Pointing")
-        #     self.tabs.setTabText(self.tabs.indexOf(self.focus_tab), "Focus")
-        # if scanType in peakTypes:
-        #     # self.peak_tab.display_scan_data(current, previous)
-        #     self.pointing_label.setText(f"Peak scan type detected. {desc}")
-        #     self.tabs.setCurrentWidget(self.pointing_tab)
-        # if scanType in focusTypes:
-        #     # self.focus_tab.display_scan_data(current, previous)
-        #     self.focus_label.setText(f"Focus scan type detected. {desc}")
-        #     self.tabs.setCurrentWidget(self.focus_tab)
-        # else:
-        #     print(f"Unknown scan type: {scanType}. No action taken.")
+
 
 
     def on_option_checkbox_changed(self):

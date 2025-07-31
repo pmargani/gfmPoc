@@ -9,10 +9,10 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from ScanData import ScanData
 from PlotData import PlotData
 
-class ContinuumTab(GfmTab):
+class SpectralTab(GfmTab):
 
     """
-    A class for handling all DCR data in GFM.
+    A class for handling all VEGAS data in GFM.
     """
 
     def __init__(
@@ -40,8 +40,8 @@ class ContinuumTab(GfmTab):
         layout.addWidget(self.options_panel)
         self.setLayout(layout)
 
-        # these are the options available for continuum data
-        self.labels = ["beams", "pols", "phases", "freqs"]
+        # these are the options available for spectral data
+        self.labels = ["beams", "pols", "phases", "IFs"]
 
     def display_scan_data(self, currentScanIndex):
         "Called in response to a scan selection change.  Displays the default plot"
@@ -116,7 +116,9 @@ class ContinuumTab(GfmTab):
         x = self.scanData.getScanXDataByIndex(scanIndex)
         y_list = [self.scanData.getScanYDataByIndex(scanIndex, key) for key in optionsKeys]
 
-        self.update_plot(x, y_list, optionsKeys, "Time", "Power", self.scanData.getScanShortDesc(scanIndex))
+        scanInfo = self.scanData.getScanFullDesc(scanIndex)
+        title = f"{scanInfo['project']}:{scanInfo['scan']}"
+        self.update_plot(x, y_list, optionsKeys, "Channels", "Counts", title)
 
 
 

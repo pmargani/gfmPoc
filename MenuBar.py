@@ -58,13 +58,15 @@ class MenuBar(QMenuBar):
         from PointingOptionsDialog import PointingOptionsDialog
         pol = PointingOptionsDialog.get_polarization(self, self.gfm_window.pointing_tab.polarization)
         print(f"Selected polarization: {pol} setting to window: {self.window}")
-        self.gfm_window.pointing_tab.set_polarization(pol)
+        if pol is not None:
+            self.gfm_window.pointing_tab.set_polarization(pol)
 
     def show_focus_polarization_dialog(self):
         from FocusOptionsDialog import FocusOptionsDialog
         pol = FocusOptionsDialog.get_polarization(self, self.gfm_window.focus_tab.polarization)
         print(f"Selected polarization: {pol} setting to window: {self.window}")
-        self.gfm_window.focus_tab.set_polarization(pol)
+        if pol is not None:
+            self.gfm_window.focus_tab.set_polarization(pol)
 
     def show_continuum_options_dialog(self):
         QMessageBox.information(self, "Continuum Tab", "There are no options for the Continuum tab")

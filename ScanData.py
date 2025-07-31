@@ -30,7 +30,7 @@ class ScanData:
         scan = self.data[self.project][index]
         return scan
 
-    def getScanOptions(self, scanIndex):
+    def getScanOptions(self, scanIndex, labels):
         """returns the scan options for the given scan index"""
         # ydata = self.data[self.project][scanIndex]['ydata']
         d = self.data[self.project][scanIndex]
@@ -39,7 +39,7 @@ class ScanData:
         ydata = d[key]
         keys = list(ydata.keys())
         options = {}
-        labels = ["beams", "pols", "phases", "freqs"]
+        # labels = ["beams", "pols", "phases", "freqs"]
         # extract the unique values for each label
         for i, label in enumerate(labels):
             options[label] = set([key[i] for key in keys])
@@ -57,7 +57,12 @@ class ScanData:
         d = ydata = self.data[self.project][scanIndex]
         k = "ydata" if "ydata" in d else "ys"
         ydata = d[k]
-        return ydata[key]
+        data = ydata[key]
+        # TBF: bugs in pkl file
+        if len(data) == 2:
+            data = data[0]
+        return data
+
 
     def getScanFullDesc(self, scan_index):
         """returns a full description of the scan"""

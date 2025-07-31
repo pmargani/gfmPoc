@@ -12,7 +12,7 @@ class ContCalibOptionsDialog(QDialog):
         from PySide6.QtWidgets import QRadioButton, QDialogButtonBox
         from PySide6.QtWidgets import QRadioButton, QDialogButtonBox, QHBoxLayout
         layout = QVBoxLayout(self)
-        label = QLabel("Choose polarization for Pointing tab:")
+        label = QLabel(f"Choose polarization for {name} tab:")
         layout.addWidget(label)
         self.radio_x = QRadioButton("X")
         self.radio_y = QRadioButton("Y")

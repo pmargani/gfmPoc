@@ -23,6 +23,9 @@ class ContCalibTab(GfmTab):
 
         self.polarization = 'X'  # Default polarization
 
+        # these are the options available for continuum data
+        self.labels = ["beams", "pols", "phases", "freqs"]
+
     def display_scan_data(self, currentScanIndex):
         # save which scan index was selected
         self.currentScanIndex = currentScanIndex
@@ -38,7 +41,7 @@ class ContCalibTab(GfmTab):
             scanNum = self.scanData.getScanNumByIndex(scanIndex)
             x = self.scanData.getScanXDataByIndex(scanIndex)
             # Try to find the key for Y polarization
-            opts = self.scanData.getScanOptions(scanIndex)
+            opts = self.scanData.getScanOptions(scanIndex, self.labels)
 
             pol = self.polarization
             key = self.get_key_for_y_pol(pol, opts)
