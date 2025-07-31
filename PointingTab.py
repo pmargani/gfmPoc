@@ -14,10 +14,7 @@ class PointingTab(GfmTab):
         layout = QVBoxLayout(self)
         self.label = QLabel("Pointing tab content goes here.")
         layout.addWidget(self.label)
-        # Add matplotlib canvas and toolbar
-        from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas, NavigationToolbar2QT
-        self.canvas = FigureCanvas()
-        self.toolbar = NavigationToolbar2QT(self.canvas, self)
+
         layout.addWidget(self.toolbar)
         layout.addWidget(self.canvas)
         self.setLayout(layout)
@@ -64,29 +61,8 @@ class PointingTab(GfmTab):
             key = tuple(key)
             y = scanData.getScanYDataByIndex(scanIndex, key)
             # Plot using PlotData
-            from PlotData import PlotData
-            plotter = PlotData(
-                x=x,
-                y_list=[y],
-                labels=[('Y',)],
-                xlabel="Time",
-                ylabel="Power",
-                title=f"Scan {scanIndex} - Y Pol"
-            )
-            fig, _ = plotter.plot()
-            # Update canvas
-            parent_layout = self.canvas.parentWidget().layout()
-            if self.toolbar is not None:
-                parent_layout.removeWidget(self.toolbar)
-                self.toolbar.setParent(None)
-                self.toolbar.deleteLater()
-            if self.canvas is not None:
-                parent_layout.removeWidget(self.canvas)
-                self.canvas.setParent(None)
-                self.canvas.deleteLater()
-            self.canvas = FigureCanvas(fig)
-            self.toolbar = NavigationToolbar2QT(self.canvas, self)
-            parent_layout.addWidget(self.toolbar)
-            parent_layout.addWidget(self.canvas)
+            self.update_plot(x, [y], ['Y'], "Time", "Power", f"Scan {scanIndex} - Y Pol")
         except Exception as e:
             self.label.setText(f"Error plotting Y pol: {e}")
+
+

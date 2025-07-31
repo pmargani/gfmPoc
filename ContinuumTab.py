@@ -20,8 +20,6 @@ class ContinuumTab(GfmTab):
         parent,
         scanData : ScanData,
         model,
-        canvas=None,
-        toolbar=None,
         options_panel=None,
         options_layout=None,
         options_checkboxes=None
@@ -29,8 +27,6 @@ class ContinuumTab(GfmTab):
         super().__init__(parent)
         self.scanData = scanData
         self.model = model
-        self.canvas = canvas or FigureCanvas()
-        self.toolbar = toolbar or NavigationToolbar2QT(self.canvas, self)
         self.options_panel = options_panel or QWidget()
         self.options_layout = options_layout or QVBoxLayout(self.options_panel)
         self.options_checkboxes = options_checkboxes or {}
@@ -117,31 +113,12 @@ class ContinuumTab(GfmTab):
         "Uses ScanData and PlotData to create a matplotlib figure and refreshes the canvas"
         print("plot_data: ", scanIndex)
         self._last_scan_index = scanIndex
-        # create the matplotlib figure
-        plotter = PlotData(
-            x=self.scanData.getScanXDataByIndex(scanIndex),
-            y_list=[self.scanData.getScanYDataByIndex(scanIndex, key) for key in optionsKeys],
-            labels=optionsKeys,
-            xlabel="Time",
-            ylabel="Power",
-            title=self.scanData.getScanShortDesc(scanIndex)
-        )
-        fig, _ = plotter.plot()
-        parent_layout = self.canvas.parentWidget().layout()
-        # clear the canvas and toolbar
-        if self.toolbar is not None:
-            parent_layout.removeWidget(self.toolbar)
-            self.toolbar.setParent(None)
-            self.toolbar.deleteLater()
-        if self.canvas is not None:
-            parent_layout.removeWidget(self.canvas)
-            self.canvas.setParent(None)
-            self.canvas.deleteLater()
-        # create new ones, passing in our figure
-        self.canvas = FigureCanvas(fig)
-        self.toolbar = NavigationToolbar2QT(self.canvas, self)
-        parent_layout.addWidget(self.toolbar)
-        parent_layout.addWidget(self.canvas)
+        x = self.scanData.getScanXDataByIndex(scanIndex)
+        y_list = [self.scanData.getScanYDataByIndex(scanIndex, key) for key in optionsKeys]
+
+        self.update_plot(x, y_list, optionsKeys, "Time", "Power", self.scanData.getScanShortDesc(scanIndex))
+
+
 
 
 

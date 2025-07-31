@@ -1,6 +1,9 @@
 "A module for the GfmTab base class for GFM tabs."
 
 from PySide6.QtWidgets import QWidget
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas, NavigationToolbar2QT
+
+from PlotData import PlotData
 
 class GfmTab(QWidget):
     """
@@ -9,10 +12,37 @@ class GfmTab(QWidget):
     """
     def __init__(self, parent=None):
         super().__init__(parent)
-        # Any shared initialization for all tabs can go here
+        # Shared matplotlib canvas and toolbar for all tabs
+        self.canvas = FigureCanvas()
+        self.toolbar = NavigationToolbar2QT(self.canvas, self)
 
     def display_scan_data(self, currentSelection):
         """
         Called when a scan is selected. Should be overridden by subclasses.
         """
         raise NotImplementedError("display_scan_data must be implemented by subclasses.")
+
+    def update_plot(self, x, ys, ylabels, xaxis_label, yaxis_label, title):
+        plotter = PlotData(
+            x=x,
+            y_list=ys,
+            labels=ylabels,
+            xlabel=xaxis_label,
+            ylabel=yaxis_label,
+            title=title
+        )
+        fig, _ = plotter.plot()
+        # Update canvas
+        parent_layout = self.canvas.parentWidget().layout()
+        if self.toolbar is not None:
+            parent_layout.removeWidget(self.toolbar)
+            self.toolbar.setParent(None)
+            self.toolbar.deleteLater()
+        if self.canvas is not None:
+            parent_layout.removeWidget(self.canvas)
+            self.canvas.setParent(None)
+            self.canvas.deleteLater()
+        self.canvas = FigureCanvas(fig)
+        self.toolbar = NavigationToolbar2QT(self.canvas, self)
+        parent_layout.addWidget(self.toolbar)
+        parent_layout.addWidget(self.canvas)
