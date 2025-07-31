@@ -19,6 +19,6 @@ if __name__ == "__main__":
         project_name = sys.argv[1]
     else:
         project_name = "GFM"
-    window = GfmWindow(project_name)
+    window = GfmWindow(project_name, app)
     window.show()
     sys.exit(app.exec())

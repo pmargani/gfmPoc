@@ -8,17 +8,20 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QCheckBox
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout
-
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas, NavigationToolbar2QT
+
 from ScanData import ScanData
 from PlotData import PlotData
 from ScanListModel import ScanListModel
 from ContinuumTab import ContinuumTab
 from PointingTab import PointingTab
 from FocusTab import FocusTab
+from MenuBar import MenuBar
+from PySide6.QtWidgets import QFileDialog
+
 
 class GfmWindow(QWidget):
-    def __init__(self, project_name : str):
+    def __init__(self, project_name : str, app):
         super().__init__()
         self.project_name = project_name
         self.setWindowTitle("GFM - " + self.project_name)
@@ -40,6 +43,7 @@ class GfmWindow(QWidget):
         fn = "projData2.pkl"
         self.scanData = ScanData(fn, self.project_name)
 
+        self.menubar = MenuBar(self, app, self.open_project)
 
         # --- Tabbed panel setup ---
         self.tabs = QTabWidget()
@@ -89,7 +93,23 @@ class GfmWindow(QWidget):
         splitter.setSizes([200, 600])
         layout = QHBoxLayout(self)
         layout.addWidget(splitter)
+        layout.setMenuBar(self.menubar)
         self.setLayout(layout)
+
+    def open_project(self):
+        # Logic to open a project
+        file_name, _ = QFileDialog.getOpenFileName(
+            self,
+            "Open Project Data File",
+            "",
+            "Pickle Files (*.pkl);;All Files (*)"
+        )
+        if file_name:
+            self.scanData = ScanData(file_name, self.project_name)
+            self.model = ScanListModel(self.scanData)
+            self.scans_widget.setModel(self.model)
+            self.firstScanSelected = False
+        pass
 
     def display_scan_data(self, current, previous):
         # keep the first scan from being displayed on startup
