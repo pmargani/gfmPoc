@@ -14,6 +14,8 @@ class GfmTab(QWidget):
     def __init__(self, parent, scanData : ScanData, name : str, scanTypes : list):
         super().__init__(parent)
 
+        self.write_to_console(f"Initializing GfmTab: {name}"
+                              )
         self.scanData = scanData
         self.name = name
         self.scanTypes = scanTypes
@@ -54,3 +56,13 @@ class GfmTab(QWidget):
         self.toolbar = NavigationToolbar2QT(self.canvas, self)
         parent_layout.addWidget(self.toolbar)
         parent_layout.addWidget(self.canvas)
+
+    def write_to_console(self, message):
+        """
+        Write a message to the console (or log).
+        """
+
+        # print(message)
+        # In a real application, you might want to use a logging framework instead
+        # of print statements for better control over logging levels and outputs.
+        self.parent().write_to_console(message)

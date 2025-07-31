@@ -100,10 +100,22 @@ class GfmWindow(QWidget):
         splitter.addWidget(self.scans_widget)
         splitter.addWidget(self.tabs)
         splitter.setSizes([200, 600])
-        layout = QHBoxLayout(self)
-        layout.addWidget(splitter)
-        layout.setMenuBar(self.menubar)
-        self.setLayout(layout)
+
+        # Create bottom tab panel with Shell and Console tabs
+        self.bottom_tabs = QTabWidget()
+        from PySide6.QtWidgets import QTextEdit
+        self.shell_tab = QTextEdit()
+        self.console_tab = QTextEdit()
+        self.console_tab.setReadOnly(True)
+        self.bottom_tabs.addTab(self.shell_tab, "Shell")
+        self.bottom_tabs.addTab(self.console_tab, "Console")
+
+        # Main vertical layout
+        main_layout = QVBoxLayout(self)
+        main_layout.setMenuBar(self.menubar)
+        main_layout.addWidget(splitter)
+        main_layout.addWidget(self.bottom_tabs)
+        self.setLayout(main_layout)
 
     def open_project(self):
         # Logic to open a project
@@ -127,7 +139,10 @@ class GfmWindow(QWidget):
             return
         # get the scan type from the scanIndex
         scanIndex = current.row()
-        scanType = self.scanData.getScanDataByIndex(scanIndex)['scanType']
+        # scanType = self.scanData.getScanDataByIndex(scanIndex)['scanType']
+        scanInfo = self.scanData.getScanDataByIndex(scanIndex)
+        scanType = scanInfo['scanType'] if 'scanType' in scanInfo else 'unknown'
+        self.write_to_console(f"Displaying scan data for scan {scanInfo['scan']} of type {scanType}")
         tabs = [
             self.continuum_tab,
             self.pointing_tab,
@@ -149,7 +164,17 @@ class GfmWindow(QWidget):
                 self.tabs.tabBar().setTabTextColor(idx, Qt.black)
                 # self.tabs.setTabText(idx, f"{label}")
 
-
+    def write_to_console(self, message):
+        """
+        Write a message to the console (or log).
+        """
+        if not hasattr(self, 'bottom_tabs'):
+            return
+        self.bottom_tabs.setCurrentWidget(self.console_tab)
+        print(message)
+        self.console_tab.append(message)
+        # In a real application, you might want to use a logging framework instead
+        # of print statements for better control over logging levels and outputs.
 
     def on_option_checkbox_changed(self):
         # Delegate to the tab's handler
