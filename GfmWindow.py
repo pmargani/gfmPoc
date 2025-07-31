@@ -6,6 +6,8 @@ import itertools
 from PySide6.QtWidgets import QWidget, QListView, QTextEdit, QHBoxLayout, QVBoxLayout, QSplitter, QTabWidget
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QGroupBox, QHBoxLayout, QCheckBox
+from PySide6.QtGui import QGuiApplication
+from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas, NavigationToolbar2QT
 from ScanData import ScanData
@@ -20,7 +22,6 @@ class GfmWindow(QWidget):
         self.setWindowTitle("GFM - " + self.project_name)
 
         # Try to size the window to about half the screen
-        from PySide6.QtGui import QGuiApplication
         screen = QGuiApplication.primaryScreen()
         if screen:
             screen_geometry = screen.geometry()
@@ -59,7 +60,6 @@ class GfmWindow(QWidget):
 
 
         # Create the pointing tab (placeholder)
-        from PySide6.QtWidgets import QWidget, QLabel, QVBoxLayout
         self.pointing_tab = QWidget()
         pointing_layout = QVBoxLayout(self.pointing_tab)
         self.pointing_label = QLabel("Pointing tab content goes here.")
@@ -97,7 +97,7 @@ class GfmWindow(QWidget):
         desc = self.scanData.getScanFullDesc(scanIndex)
         # Delegate scan display to the tabs
         if scanType in continuumTypes:
-            self.continuum_tab.display_scan_data(current, previous)
+            self.continuum_tab.display_scan_data(current)
             self.tabs.setCurrentWidget(self.continuum_tab)
         if scanType in peakTypes:
             # self.peak_tab.display_scan_data(current, previous)
