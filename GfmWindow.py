@@ -62,7 +62,7 @@ class GfmWindow(QWidget):
         self.model = ScanListModel(self.scanData)
         self.scans_widget.setModel(self.model)
         self.scans_widget.selectionModel().currentChanged.connect(self.display_scan_data)
-        self.firstScanSelected = False # TBF: kluge to avoid displaying the first scan on startup
+        # self.firstScanSelected = False # TBF: kluge to avoid displaying the first scan on startup
 
 
         # *** create tabs:
@@ -157,13 +157,14 @@ class GfmWindow(QWidget):
             self.model = ScanListModel(self.scanData)
             self.scans_widget.setModel(self.model)
             self.firstScanSelected = False
-        pass
+
 
     def display_scan_data(self, current, previous):
         # keep the first scan from being displayed on startup
-        if not self.firstScanSelected:  # TBF: kluge
-            self.firstScanSelected = True
-            return
+        print("display_scan_data called", current) # self.firstScanSelected:", self.firstScanSelected)
+        # if not self.firstScanSelected:  # TBF: kluge
+        #     self.firstScanSelected = True
+        #     return
         # get the scan type from the scanIndex
         scanIndex = current.row()
         # scanType = self.scanData.getScanDataByIndex(scanIndex)['scanType']
