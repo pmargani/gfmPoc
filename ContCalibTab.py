@@ -41,10 +41,10 @@ class ContCalibTab(GfmTab):
             opts = self.scanData.getScanOptions(scanIndex)
 
             pol = self.polarization
-            key = self.get_key_for_y_pol('Y', opts)
+            key = self.get_key_for_y_pol(pol, opts)
             y = self.scanData.getScanYDataByIndex(scanIndex, key)
             # Plot using PlotData
-            self.update_plot(x, [y], ['Y'], "Time", "Power", f"Scan {scanNum} - {pol} Pol")
+            self.update_plot(x, [y], [pol], "Time", "Power", f"Scan {scanNum} - {pol} Pol")
         except Exception as e:
             self.label.setText(f"Error plotting Y pol: {e}")
 
@@ -87,5 +87,6 @@ class ContCalibTab(GfmTab):
         self.polarization = pol
         # self.label.setText(f"Polarization set to {pol}.")
         # Optionally, you can trigger a replot or update based on the new polarization
-        self.display_scan_data(self.currentScanIndex)
+        if self.currentScanIndex is not None:
+            self.display_scan_data(self.currentScanIndex)
         # Note: currentSelection should be set to the currently selected scan in the parent widget

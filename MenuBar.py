@@ -5,7 +5,7 @@ from PySide6.QtGui import QAction
 class MenuBar(QMenuBar):
     def show_pointing_polarization_dialog(self):
         from PointingOptionsDialog import PointingOptionsDialog
-        pol = PointingOptionsDialog.get_polarization(self)
+        pol = PointingOptionsDialog.get_polarization(self, self.gfm_window.pointing_tab.polarization)
         print(f"Selected polarization: {pol} setting to window: {self.window}")
         self.gfm_window.pointing_tab.set_polarization(pol)
 

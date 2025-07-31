@@ -22,6 +22,8 @@ class GfmTab(QWidget):
         self.canvas = FigureCanvas()
         self.toolbar = NavigationToolbar2QT(self.canvas, self)
 
+        self.currentScanIndex = None  # To track the currently selected scan index
+
     def display_scan_data(self, currentSelection):
         """
         Called when a scan is selected. Should be overridden by subclasses.
