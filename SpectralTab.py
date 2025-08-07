@@ -89,9 +89,33 @@ class SpectralTab(OptionsTab):
             x = self.xFreqRange[0] + (self.xFreqRange[1] - self.xFreqRange[0]) * (x / x_max)
             y_list = [np.asarray(y)[::-1] for y in y_list]
 
+        # In-place refresh: clear only the axes, not the figure
+        if self.canvas and hasattr(self.canvas, "figure"):
+            fig = self.canvas.figure
+            if fig.axes:
+                ax = fig.axes[0]
+                ax.clear()
+            else:
+                ax = fig.add_subplot(111)
+        else:
+            from matplotlib.figure import Figure
+            fig = Figure(figsize=(4, 3))
+            ax = fig.add_subplot(111)
+            self.canvas.figure = fig
+
+        # Plot the new data
+        for y, label in zip(y_list, optionsKeys):
+            ax.plot(x, y, label=str(label))
         scanInfo = self.scanData.getScanDataByIndex(scanIndex)
         title = f"{scanInfo['project']}:{scanInfo['scan']}:{self.integration}"
-        self.update_plot(x, y_list, optionsKeys, x_label, "Counts", title)
+        ax.set_title(title)
+        ax.set_xlabel(x_label)
+        ax.set_ylabel("Counts")
+        ax.legend()
+        # Print 'source' in the upper right hand corner of the plot
+        ax.text(0.98, 0.98, "source", transform=ax.transAxes,
+                fontsize=12, color="black", ha="right", va="top")
+        self.canvas.draw()
 
         # Get the colors used for each line in the plot
         colors_used = []

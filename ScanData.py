@@ -8,6 +8,7 @@ class ScanData:
         with open(pkl_file, 'rb') as f:
             self.data = pickle.load(f, encoding='latin1')
         self.project = project_name
+        print(f"data from disk includes projects: {self.data.keys()}")
         self.numScans = len(self.data[project_name])
         print(f"ScanData: loaded {self.numScans} scans for project {self.project}")
         print(type(self.data[self.project]))

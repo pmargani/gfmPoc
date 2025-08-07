@@ -87,6 +87,7 @@ class OptionsTab(GfmTab):
         "Called when an option checkbox is changed.  Updates the plot based on selected options."
         # find the selected values from the checkboxes
         # labels = ["beams", "pols", "phases", "freqs"]
+        print(f"self.optionKeys: {self.optionKeys  }")
         labels = self.optionKeys
         selected_values = {}
         for label in labels:

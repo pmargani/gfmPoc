@@ -39,4 +39,9 @@ class PlotData:
         ax.set_xlabel(self.xlabel)
         ax.set_ylabel(self.ylabel)
         ax.legend()
+
+        x = 0.75
+        y = 0.75
+        ax.text(x, y, "source", transform=ax.transAxes,
+                        fontsize=12, color="black", ha="right", va="top")
         return fig, ax

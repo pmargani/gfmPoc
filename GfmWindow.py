@@ -131,11 +131,16 @@ class GfmWindow(QWidget):
         self.bottom_tabs.addTab(self.console_tab, "Console")
         self.bottom_tabs.addTab(self.shell_tab, "Shell")
 
+        # Add a vertical splitter between splitter and bottom_tabs
+        vertical_splitter = QSplitter(Qt.Vertical)
+        vertical_splitter.addWidget(splitter)
+        vertical_splitter.addWidget(self.bottom_tabs)
+        vertical_splitter.setSizes([600, 200])
+
         # Main vertical layout
         main_layout = QVBoxLayout(self)
         main_layout.setMenuBar(self.menubar)
-        main_layout.addWidget(splitter)
-        main_layout.addWidget(self.bottom_tabs)
+        main_layout.addWidget(vertical_splitter)
 
         # Add status bar at the bottom
         self.status_bar = QStatusBar()
