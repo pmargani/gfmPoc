@@ -30,10 +30,50 @@ class GfmWindow(QWidget):
     Main window for the GFM application.
     """
 
+
+
+
     def __init__(self, project_name : str, app):
         super().__init__()
         self.project_name = project_name
         self.setWindowTitle("GFM - " + self.project_name)
+
+        # Default options models for ContCalibOptionsDialog tabs
+        self.POLARIZATIONS_MODEL = [
+            ("X / Left", "X"),
+            ("Y / Right", "Y"),
+            ("Both", "Both")
+        ]
+
+        self.FITTING_MODEL = [
+            ("Do not apply corrections", "none"),
+            ("Automatically accept good fits, automatically reject bad fits", "auto_accept_good_auto_reject_bad"),
+            ("Automatically accept good fits, interactively accept bad fits", "auto_accept_good_interactive_bad"),
+            ("Interactively accept good and bad fits", "interactive_all"),
+            ("Accept all automatically", "accept_all_auto")
+        ]
+
+        self.HEURISTICS_MODEL = [
+            ("Default", "default"),
+            ("Standard", "standard"),
+            ("Relaxed", "relaxed"),
+            ("UserDefined", "userdefined")
+        ]
+
+        self.PROCESSING_MODEL = [
+            ("Beam Switched", "beam_switched"),
+            ("Beam Switched TB Only", "beam_switched_tb_only"),
+            ("Dual Beam", "dual_beam"),
+            ("Total Power", "total_power"),
+            ("Raw", "raw")
+        ]
+
+        self.DIALOG_OPTIONS = {
+            "polarizations": self.POLARIZATIONS_MODEL,
+            "fitting": self.FITTING_MODEL,
+            "heuristics": self.HEURISTICS_MODEL,
+            "processing": self.PROCESSING_MODEL
+        }
 
         # Try to size the window to about half the screen
         screen = QGuiApplication.primaryScreen()
@@ -52,7 +92,7 @@ class GfmWindow(QWidget):
         fn = "projData3.pkl"
         self.scanData = ScanData(fn, self.project_name)
 
-        self.menubar = MenuBar(self, app, self.open_project)
+        self.menubar = MenuBar(self, app, self.open_project, self.DIALOG_OPTIONS)
 
         # --- Tabbed panel setup ---
         self.tabs = QTabWidget()

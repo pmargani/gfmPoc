@@ -9,9 +9,10 @@ class MenuBar(QMenuBar):
     This class creates a menu bar for the application with File and Help menus.
     """
 
-    def __init__(self, window, app, open_action_handler):
+    def __init__(self, window, app, open_action_handler, options):
         super().__init__(window)
         self.gfm_window = window
+        self.options = options
 
         # File menu
         file_menu = QMenu('File', self)
@@ -56,14 +57,14 @@ class MenuBar(QMenuBar):
 
     def show_pointing_polarization_dialog(self):
         from PointingOptionsDialog import PointingOptionsDialog
-        pol = PointingOptionsDialog.get_polarization(self, self.gfm_window.pointing_tab.polarization)
+        pol = PointingOptionsDialog.get_polarization(self, self.gfm_window.pointing_tab.polarization, self.options)
         print(f"Selected polarization: {pol} setting to window: {self.window}")
         if pol is not None:
             self.gfm_window.pointing_tab.set_polarization(pol)
 
     def show_focus_polarization_dialog(self):
         from FocusOptionsDialog import FocusOptionsDialog
-        pol = FocusOptionsDialog.get_polarization(self, self.gfm_window.focus_tab.polarization)
+        pol = FocusOptionsDialog.get_polarization(self, self.gfm_window.focus_tab.polarization, self.options)
         print(f"Selected polarization: {pol} setting to window: {self.window}")
         if pol is not None:
             self.gfm_window.focus_tab.set_polarization(pol)
